@@ -10,9 +10,9 @@ interface State {
 }
 
 const INTERVAL_INCREMENTS = 100;
-const WORK_SESSION = 2000; // 25 * 60 * 1000;
-const SHORT_BREAK = 2000; // 5 * 60 * 1000;
-const LONG_BREAK = 2000; //30 * 60 * 1000;
+const WORK_SESSION = 25 * 60 * 1000;
+const SHORT_BREAK = 5 * 60 * 1000;
+const LONG_BREAK = 30 * 60 * 1000;
 
 class Timer extends Component<any, State> {
   constructor(props: any) {
@@ -33,9 +33,11 @@ class Timer extends Component<any, State> {
         <div>CANCEL INTERVAL</div>
         <div>
           <p>{this.state.currentIntervalType}</p>
-          {this.convertMillisecondsToReadableTime(
-            this.state.timeLeftInCurrentInterval
-          )}
+          <p className="timer__clock">
+            {this.convertMillisecondsToReadableTime(
+              this.state.timeLeftInCurrentInterval
+            )}
+          </p>
         </div>
         <div onClick={this.onIntervalToggle}>START / PAUSE</div>
         <div>COMPLETED POMODOROS {this.state.completedIntervals} / 8</div>
@@ -113,7 +115,11 @@ class Timer extends Component<any, State> {
     s = (s - secs) / 60;
     var mins = s % 60;
 
-    return mins + ":" + secs;
+    return this.padNumber(mins) + ":" + this.padNumber(secs);
+  }
+
+  private padNumber(num: number) {
+    return num < 10 ? "0" + num : "" + num;
   }
 }
 
