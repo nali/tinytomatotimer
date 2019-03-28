@@ -1,0 +1,9 @@
+.timer__button.pause {
+  height: 10em;
+  padding-top: 30px;
+}
+
+.timer__button.start {
+  height: 10em;
+  padding-top: 30px;
+}

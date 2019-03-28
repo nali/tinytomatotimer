@@ -1,5 +1,8 @@
 import React, { Component } from "react";
 import "./Timer.css";
+import tinyTomatoTimerLogo from "./../img/tinyTomatoTimerLogo.svg";
+import TimerButton from "./TimerButton";
+import ProgressBar from "./ProgressBar";
 
 interface State {
   completedIntervals: number;
@@ -30,17 +33,30 @@ class Timer extends Component<any, State> {
   render() {
     return (
       <div className="timer">
-        <div>CANCEL INTERVAL</div>
         <div>
-          <p>{this.state.currentIntervalType}</p>
+          <img
+            className="timer__logo"
+            src={tinyTomatoTimerLogo}
+            alt="Tiny Tomato Timer"
+          />
+        </div>
+
+        {/* <div>CANCEL INTERVAL</div> */}
+        <TimerButton
+          isRunning={!!this.state.currentInterval}
+          onClick={this.onIntervalToggle.bind(this)}
+        />
+        <div>
+          {/* <p>{this.state.currentIntervalType}</p> */}
           <p className="timer__clock">
             {this.convertMillisecondsToReadableTime(
               this.state.timeLeftInCurrentInterval
             )}
           </p>
         </div>
-        <div onClick={this.onIntervalToggle}>START / PAUSE</div>
-        <div>COMPLETED POMODOROS {this.state.completedIntervals} / 8</div>
+        {/* <div onClick={this.onIntervalToggle}>START / PAUSE</div> */}
+        <ProgressBar completedIntervals={this.state.completedIntervals} />
+        {/* <div>COMPLETED POMODOROS {this.state.completedIntervals} / 8</div> */}
       </div>
     );
   }

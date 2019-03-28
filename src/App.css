@@ -3,9 +3,11 @@ body {
   height: 100%;
   color: #3e4651;
 }
+
 body {
   margin: 0;
 }
+
 #root {
   background-color: #eceaf4; /* #c0b8d9;*/
   height: 100%;
@@ -14,4 +16,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+img {
+  width: 100%;
 }
