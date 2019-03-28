@@ -3,6 +3,7 @@ import "./Timer.css";
 import tinyTomatoTimerLogo from "./../img/tinyTomatoTimerLogo.svg";
 import TimerButton from "./TimerButton";
 import ProgressBar from "./ProgressBar";
+import IntervalLabel from "./IntervalLabel";
 
 interface State {
   completedIntervals: number;
@@ -47,16 +48,14 @@ class Timer extends Component<any, State> {
           onClick={this.onIntervalToggle.bind(this)}
         />
         <div>
-          {/* <p>{this.state.currentIntervalType}</p> */}
           <p className="timer__clock">
             {this.convertMillisecondsToReadableTime(
               this.state.timeLeftInCurrentInterval
             )}
           </p>
+          <IntervalLabel intervalType={this.state.currentIntervalType} />
         </div>
-        {/* <div onClick={this.onIntervalToggle}>START / PAUSE</div> */}
         <ProgressBar completedIntervals={this.state.completedIntervals} />
-        {/* <div>COMPLETED POMODOROS {this.state.completedIntervals} / 8</div> */}
       </div>
     );
   }
