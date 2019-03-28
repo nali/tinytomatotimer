@@ -5,11 +5,15 @@
 }
 
 .timer__progressbar__dot {
-  background-color: #cbc2de;
   border: 2px solid #cbc2de;
+  background-color: #fff;
   height: 1em;
   width: 1em;
   border-radius: 50%;
   -moz-border-radius: 50%;
   -webkit-border-radius: 50%;
+}
+
+.timer__progressbar__dot--filled {
+  background-color: #cbc2de;
 }

@@ -1,6 +1,6 @@
 import React from "react";
-import startTimerImage from "./../img/startTimer.svg";
-import pauseTimerImage from "./../img/pauseTimer.svg";
+import startTimerImage from "./../img/startTimerFilled.svg";
+import pauseTimerImage from "./../img/pauseTimerFilled.svg";
 import "./TimerButton.css";
 
 interface Props {
