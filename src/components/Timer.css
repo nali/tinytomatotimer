@@ -1,7 +1,4 @@
 .timer {
-  /* background-color: #eaecf2;
-  border-radius: 10px;
-  box-shadow: 10px 10px 26px -16px rgba(62, 70, 81, 1); */
   text-align: center;
   max-width: 80%;
 }
@@ -11,15 +8,17 @@
 }
 
 .timer__clock {
-  font-family: "Space Mono", monospace;
   font-size: 4rem;
   margin: 0;
 }
 
 .timer__button {
   cursor: pointer;
+  transition: filter 0.1s ease;
 }
 
 .timer__button:hover {
-  opacity: 0.8;
+  /* opacity: 0.8; */
+  -webkit-filter: drop-shadow(3px 3px 2px rgba(62, 70, 81, 0.6));
+  filter: drop-shadow(3px 3px 2px rgba(62, 70, 81, 0.6));
 }

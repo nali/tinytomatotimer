@@ -5,6 +5,7 @@ body {
 }
 
 body {
+  font-family: "Space Mono", monospace;
   margin: 0;
 }
 
@@ -16,6 +17,27 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.install-cta {
+  background-color: #cbc2de;
+  font-weight: bold;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 1em;
+  text-align: right;
+  cursor: pointer;
+  transition: background-color 0.5s ease;
+}
+
+.install-cta:hover {
+  background-color: #c0b8d9;
 }
 
 img {
