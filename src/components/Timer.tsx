@@ -4,6 +4,8 @@ import tinyTomatoTimerLogo from "./../img/tinyTomatoTimerLogo.svg";
 import TimerButton from "./TimerButton";
 import ProgressBar from "./ProgressBar";
 import IntervalLabel from "./IntervalLabel";
+import CancelImage from "./../img/cancel.svg";
+import SkipImage from "./../img/skip.svg";
 import { set, get } from "idb-keyval";
 
 interface State {
@@ -52,13 +54,24 @@ class Timer extends Component<any, State> {
             alt="Tiny Tomato Timer"
           />
         </div>
-
-        {/* <div onClick={this.wrapUpInterval.bind(this)}>SKIP INTERVAL</div>
-        <div onClick={this.resetInterval.bind(this)}>RESET INTERVAL</div> */}
-        <TimerButton
-          isRunning={!!this.state.currentInterval}
-          onClick={this.onIntervalToggle.bind(this)}
-        />
+        <div className="timer__controls">
+          <img
+            className="timer__controls--small"
+            onClick={this.resetInterval.bind(this)}
+            src={CancelImage}
+            alt="Cancel Interval"
+          />
+          <TimerButton
+            isRunning={!!this.state.currentInterval}
+            onClick={this.onIntervalToggle.bind(this)}
+          />
+          <img
+            className="timer__controls--small"
+            src={SkipImage}
+            alt="Skip Interval"
+            onClick={this.wrapUpInterval.bind(this)}
+          />
+        </div>
         <div>
           <p className="timer__clock">
             {this.convertMillisecondsToReadableTime(
