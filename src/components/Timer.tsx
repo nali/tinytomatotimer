@@ -4,6 +4,7 @@ import tinyTomatoTimerLogo from "./../img/tinyTomatoTimerLogo.svg";
 import TimerButton from "./TimerButton";
 import ProgressBar from "./ProgressBar";
 import IntervalLabel from "./IntervalLabel";
+import { set, get } from "idb-keyval";
 
 interface State {
   completedIntervals: number;
@@ -29,6 +30,16 @@ class Timer extends Component<any, State> {
     };
 
     this.onIntervalToggle = this.onIntervalToggle.bind(this);
+  }
+
+  componentWillMount() {
+    get(this.getFormattedCurrentDate()).then(val => {
+      if (val && typeof val == "number") {
+        this.setState({
+          completedIntervals: val
+        });
+      }
+    });
   }
 
   render() {
@@ -89,7 +100,9 @@ class Timer extends Component<any, State> {
 
   private updateStats() {
     if (this.state.currentIntervalType == "workSession") {
-      this.setState({ completedIntervals: this.state.completedIntervals + 1 });
+      const completedIntervals = this.state.completedIntervals + 1;
+      this.setState({ completedIntervals });
+      set(this.getFormattedCurrentDate(), completedIntervals);
     }
   }
 
@@ -121,6 +134,11 @@ class Timer extends Component<any, State> {
           timeLeftInCurrentInterval: WORK_SESSION
         });
     }
+  }
+
+  private getFormattedCurrentDate() {
+    const date = new Date();
+    return [date.getDate(), date.getMonth() + 1, date.getFullYear()].join("-");
   }
 
   private convertMillisecondsToReadableTime(s: number) {

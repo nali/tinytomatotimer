@@ -24,7 +24,7 @@ class App extends Component<any, State> {
       deferredPrompt = e;
 
       this.setState({
-        showInstallCTA: true
+        showInstallCTA: false // Temporarily disable
       });
       console.log("Got prompt");
     });
