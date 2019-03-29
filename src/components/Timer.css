@@ -32,7 +32,7 @@
 
 .timer__controls {
   display: flex;
-  padding: 2em;
+  padding: 0 2em;
 }
 
 .timer__controls--small {
