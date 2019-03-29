@@ -53,7 +53,8 @@ class Timer extends Component<any, State> {
           />
         </div>
 
-        {/* <div>CANCEL INTERVAL</div> */}
+        {/* <div onClick={this.wrapUpInterval.bind(this)}>SKIP INTERVAL</div>
+        <div onClick={this.resetInterval.bind(this)}>RESET INTERVAL</div> */}
         <TimerButton
           isRunning={!!this.state.currentInterval}
           onClick={this.onIntervalToggle.bind(this)}
@@ -86,14 +87,40 @@ class Timer extends Component<any, State> {
     }
   }
 
+  private wrapUpInterval() {
+    this.clearCurrentInterval();
+    this.updateStats();
+  }
+
+  private resetInterval() {
+    this.clearCurrentInterval();
+
+    switch (this.state.currentIntervalType) {
+      case "workSession":
+        this.setState({
+          timeLeftInCurrentInterval: WORK_SESSION
+        });
+        break;
+      case "longBreak":
+        this.setState({
+          timeLeftInCurrentInterval: LONG_BREAK
+        });
+        break;
+      case "shortBreak":
+        this.setState({
+          timeLeftInCurrentInterval: LONG_BREAK
+        });
+        break;
+      default:
+    }
+  }
+
   private onIntervalIncrement(s: number) {
     const timeLeft = this.state.timeLeftInCurrentInterval - s;
     if (timeLeft < 0) {
       // We've just finished the interval
-      this.clearCurrentInterval();
+      this.wrapUpInterval();
       this.notifyUser(this.state.currentIntervalType === "workSession");
-      this.updateStats();
-      this.setNextInterval();
     } else {
       this.setState({
         timeLeftInCurrentInterval: timeLeft
@@ -102,24 +129,16 @@ class Timer extends Component<any, State> {
   }
 
   private updateStats() {
+    let completedIntervals = this.state.completedIntervals;
     if (this.state.currentIntervalType == "workSession") {
-      const completedIntervals = this.state.completedIntervals + 1;
+      completedIntervals = this.state.completedIntervals + 1;
       this.setState({ completedIntervals });
       set(this.getFormattedCurrentDate(), completedIntervals);
     }
-  }
 
-  private clearCurrentInterval() {
-    window.clearInterval(this.state.currentInterval);
-    this.setState({
-      currentInterval: undefined
-    });
-  }
-
-  private setNextInterval() {
     switch (this.state.currentIntervalType) {
       case "workSession":
-        if (this.state.completedIntervals % 4 === 0) {
+        if (completedIntervals % 4 === 0) {
           this.setState({
             currentIntervalType: "longBreak",
             timeLeftInCurrentInterval: LONG_BREAK
@@ -137,6 +156,13 @@ class Timer extends Component<any, State> {
           timeLeftInCurrentInterval: WORK_SESSION
         });
     }
+  }
+
+  private clearCurrentInterval() {
+    window.clearInterval(this.state.currentInterval);
+    this.setState({
+      currentInterval: undefined
+    });
   }
 
   private getFormattedCurrentDate() {
