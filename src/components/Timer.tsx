@@ -72,6 +72,8 @@ class Timer extends Component<any, State> {
   }
 
   private onIntervalToggle() {
+    this.requestNotifications();
+
     if (this.state.currentInterval) {
       this.clearCurrentInterval();
     } else {
@@ -89,6 +91,7 @@ class Timer extends Component<any, State> {
     if (timeLeft < 0) {
       // We've just finished the interval
       this.clearCurrentInterval();
+      this.notifyUser(this.state.currentIntervalType === "workSession");
       this.updateStats();
       this.setNextInterval();
     } else {
@@ -139,6 +142,28 @@ class Timer extends Component<any, State> {
   private getFormattedCurrentDate() {
     const date = new Date();
     return [date.getDate(), date.getMonth() + 1, date.getFullYear()].join("-");
+  }
+
+  private notifyUser(isWorkSession: boolean) {
+    if (Notification.permission === "granted") {
+      const message = isWorkSession
+        ? "Take a break! You just finished a Pomodoro interval."
+        : "Time for your next work interval, your break is over.";
+      new Notification("Tiny Tomato Timer", { body: message });
+    }
+  }
+
+  private requestNotifications() {
+    if (!("Notification" in window)) {
+      console.log("This browser does not support system notifications");
+    }
+    if (Notification.permission !== "denied") {
+      Notification.requestPermission(function(permission) {
+        if (permission === "granted") {
+          console.log("Notification permissions have been granted");
+        }
+      });
+    }
   }
 
   private convertMillisecondsToReadableTime(s: number) {
