@@ -121,7 +121,7 @@ class Timer extends Component<any, State> {
         break;
       case "shortBreak":
         this.setState({
-          timeLeftInCurrentInterval: LONG_BREAK
+          timeLeftInCurrentInterval: SHORT_BREAK
         });
         break;
       default:
