@@ -133,7 +133,7 @@ class Timer extends Component<any, State> {
     if (timeLeft < 0) {
       // We've just finished the interval
       this.wrapUpInterval();
-      this.notifyUser(this.state.currentIntervalType === "workSession");
+      this.notifyUser(this.state.currentIntervalType !== "workSession");
     } else {
       this.setState({
         timeLeftInCurrentInterval: timeLeft
