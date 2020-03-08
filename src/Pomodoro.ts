@@ -1,8 +1,11 @@
-const MAX_INTERVALS: number = 8;
+import { set, get } from "idb-keyval";
+import { getFormattedCurrentDate } from "./utils/time";
+
+const MAX_INTERVALS: number = 8; // After which your workday is done
 const WORK_SESSION_LENGTH: number = 0.1 * 60 * 1000; // 25 minutes
 const LONG_BREAK_LENGTH: number = 30 * 60 * 1000; // 30 minutes
 const SHORT_BREAK_LENGTH: number = 5 * 60 * 1000; // 5 minutes
-const LONG_BREAK_AFTER: [number] = [4];
+const LONG_BREAK_AFTER: [number] = [4]; // How many work sessions the longer breaks should be after
 
 type IntervalType =
   | "start"
@@ -16,6 +19,47 @@ type IntervalId = number;
 interface Interval {
   time: number;
   next: (intervalCount: number) => IntervalType;
+}
+
+interface CurrentInterval {
+  interval: Interval;
+  timeLeft: number;
+  intervalCount: number;
+}
+
+class Stopwatch {
+  private intervalId?: IntervalId;
+  private time: number;
+  private increment: number = 100;
+  onFinish: () => void;
+  onTick: (timeLeft: number) => void;
+
+  constructor(
+    time: number,
+    onTick: (timeLeft: number) => void,
+    onFinish: () => void
+  ) {
+    this.time = time;
+    this.onTick = onTick;
+    this.onFinish = onFinish;
+  }
+
+  start() {
+    this.intervalId = window.setInterval(this.check.bind(this), this.increment);
+  }
+
+  check() {
+    const timeLeft = this.time - this.increment;
+    if (timeLeft < 0) {
+      this.onFinish();
+    } else {
+      this.onTick(timeLeft);
+    }
+  }
+
+  stop() {
+    window.clearInterval(this.intervalId);
+  }
 }
 
 class Pomodoro {
@@ -39,18 +83,32 @@ class Pomodoro {
   };
   currentState: IntervalType;
   intervalCount: number;
+  onUpdate: (currentInterval: CurrentInterval) => void;
 
-  constructor() {
+  constructor(onUpdate: (currentInterval: CurrentInterval) => void) {
     this.currentState = "start";
-    this.intervalCount = 0; // Lookup from indexed db.
+    this.intervalCount = 0;
+    this.onUpdate = onUpdate;
+
+    get(getFormattedCurrentDate()).then(val => {
+      if (val && typeof val == "number") {
+        this.intervalCount = val;
+      }
+      this.next();
+    });
+  }
+
+  update() {}
+
+  finish() {
+    if (this.currentState === "workSession") {
+      this.intervalCount++;
+      set(getFormattedCurrentDate(), this.intervalCount);
+    }
   }
 
   next() {
-    if (this.currentState === "workSession") {
-      this.intervalCount++;
-    }
     this.currentState = this.states[this.currentState].next(this.intervalCount);
-
     console.log(this.intervalCount);
   }
 }
