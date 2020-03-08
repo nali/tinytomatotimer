@@ -11,6 +11,7 @@ import IntervalLabel, { IntervalType } from "./IntervalLabel";
 import CancelImage from "./../img/cancel.svg";
 import SkipImage from "./../img/skip.svg";
 import { set, get } from "idb-keyval";
+import { Intervals } from "./../config";
 
 interface State {
   completedIntervals: number;
@@ -20,19 +21,14 @@ interface State {
   currentInterval?: number;
 }
 
-const INTERVAL_INCREMENTS = 100;
-const WORK_SESSION = 0.1 * 60 * 1000;
-const SHORT_BREAK = 5 * 60 * 1000;
-const LONG_BREAK = 30 * 60 * 1000;
 interface Props {}
 
 class Timer extends Component<Props, State> {
-
   constructor(props: Props) {
     super(props);
     this.state = {
       completedIntervals: 0,
-      timeLeftInCurrentInterval: WORK_SESSION,
+      timeLeftInCurrentInterval: Intervals.work_session,
       currentIntervalType: "workSession",
       intervalPaused: false
     };
@@ -99,8 +95,8 @@ class Timer extends Component<Props, State> {
     } else {
       this.setState({
         currentInterval: window.setInterval(
-          this.onIntervalIncrement.bind(this, INTERVAL_INCREMENTS),
-          INTERVAL_INCREMENTS
+          this.onIntervalIncrement.bind(this, Intervals.increments),
+          Intervals.increments
         )
       });
     }
@@ -117,17 +113,17 @@ class Timer extends Component<Props, State> {
     switch (this.state.currentIntervalType) {
       case "workSession":
         this.setState({
-          timeLeftInCurrentInterval: WORK_SESSION
+          timeLeftInCurrentInterval: Intervals.work_session
         });
         break;
       case "longBreak":
         this.setState({
-          timeLeftInCurrentInterval: LONG_BREAK
+          timeLeftInCurrentInterval: Intervals.long_break
         });
         break;
       case "shortBreak":
         this.setState({
-          timeLeftInCurrentInterval: SHORT_BREAK
+          timeLeftInCurrentInterval: Intervals.short_break
         });
         break;
       default:
@@ -160,19 +156,19 @@ class Timer extends Component<Props, State> {
         if (completedIntervals % 4 === 0) {
           this.setState({
             currentIntervalType: "longBreak",
-            timeLeftInCurrentInterval: LONG_BREAK
+            timeLeftInCurrentInterval: Intervals.long_break
           });
         } else {
           this.setState({
             currentIntervalType: "shortBreak",
-            timeLeftInCurrentInterval: SHORT_BREAK
+            timeLeftInCurrentInterval: Intervals.short_break
           });
         }
         break;
       default:
         this.setState({
           currentIntervalType: "workSession",
-          timeLeftInCurrentInterval: WORK_SESSION
+          timeLeftInCurrentInterval: Intervals.work_session
         });
     }
   }
