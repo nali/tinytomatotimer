@@ -12,11 +12,11 @@ import CancelImage from "./../img/cancel.svg";
 import SkipImage from "./../img/skip.svg";
 import { set, get } from "idb-keyval";
 import { Intervals } from "./../Config";
+import Pomodoro from "./../Pomodoro";
 
 interface State {
   completedIntervals: number;
   timeLeftInCurrentInterval: number;
-  intervalPaused: boolean;
   currentIntervalType: IntervalType;
   currentInterval?: number;
 }
@@ -24,13 +24,16 @@ interface State {
 interface Props {}
 
 class Timer extends Component<Props, State> {
+  pomodoro: Pomodoro;
+
   constructor(props: Props) {
     super(props);
+
+    this.pomodoro = new Pomodoro();
     this.state = {
       completedIntervals: 0,
       timeLeftInCurrentInterval: Intervals.work_session,
-      currentIntervalType: "workSession",
-      intervalPaused: false
+      currentIntervalType: "workSession"
     };
   }
 

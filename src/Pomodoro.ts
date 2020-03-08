@@ -94,22 +94,26 @@ class Pomodoro {
       if (val && typeof val == "number") {
         this.intervalCount = val;
       }
-      this.next();
     });
   }
 
-  update() {}
+  pause() {}
+
+  resume() {}
+
+  reset() {}
 
   finish() {
     if (this.currentState === "workSession") {
       this.intervalCount++;
       set(getFormattedCurrentDate(), this.intervalCount);
     }
+
+    this.next();
   }
 
   next() {
     this.currentState = this.states[this.currentState].next(this.intervalCount);
-    console.log(this.intervalCount);
   }
 }
 
