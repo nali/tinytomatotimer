@@ -1,6 +1,6 @@
 import React from "react";
 import "./ProgressBar.css";
-import { Intervals } from "./../config";
+import { Intervals } from "./../Config";
 
 interface Props {
   completedIntervals: number;

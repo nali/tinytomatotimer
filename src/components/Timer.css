@@ -24,8 +24,15 @@
   transition: filter 0.1s ease;
 }
 
-.timer__button:hover {
-  /* opacity: 0.8; */
+.timer__button--small {
+  cursor: pointer;
+  width: 2rem;
+  align-self: flex-start;
+  padding-top: 3rem;
+}
+
+.timer__button:hover,
+.timer__button--small:hover {
   -webkit-filter: drop-shadow(3px 3px 2px rgba(62, 70, 81, 0.6));
   filter: drop-shadow(3px 3px 2px rgba(62, 70, 81, 0.6));
 }
@@ -33,11 +40,4 @@
 .timer__controls {
   display: flex;
   padding: 0 2rem;
-}
-
-.timer__controls--small {
-  cursor: pointer;
-  width: 2rem;
-  align-self: flex-start;
-  padding-top: 3rem;
 }

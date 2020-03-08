@@ -11,7 +11,7 @@ import IntervalLabel, { IntervalType } from "./IntervalLabel";
 import CancelImage from "./../img/cancel.svg";
 import SkipImage from "./../img/skip.svg";
 import { set, get } from "idb-keyval";
-import { Intervals } from "./../config";
+import { Intervals } from "./../Config";
 
 interface State {
   completedIntervals: number;
@@ -58,7 +58,7 @@ class Timer extends Component<Props, State> {
         </div>
         <div className="timer__controls">
           <img
-            className="timer__controls--small"
+            className="timer__button--small"
             onClick={this.resetInterval.bind(this)}
             src={CancelImage}
             alt="Cancel Interval"
@@ -68,7 +68,7 @@ class Timer extends Component<Props, State> {
             onClick={this.onIntervalToggle.bind(this)}
           />
           <img
-            className="timer__controls--small"
+            className="timer__button--small"
             src={SkipImage}
             alt="Skip Interval"
             onClick={this.wrapUpInterval.bind(this)}
