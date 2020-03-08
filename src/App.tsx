@@ -45,18 +45,17 @@ class App extends Component<any, State> {
   }
 
   private onInstall() {
-    // Show the install prompt
     if (
       this.state.deferredPrompt &&
       isBeforeInstallPrompt(this.state.deferredPrompt)
     ) {
       this.state.deferredPrompt.prompt();
-    }
 
-    this.setState({
-      deferredPrompt: undefined,
-      showInstallCTA: false
-    });
+      this.setState({
+        deferredPrompt: undefined,
+        showInstallCTA: false
+      });
+    }
   }
 }
 
