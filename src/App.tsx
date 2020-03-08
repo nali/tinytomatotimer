@@ -1,16 +1,11 @@
 import React, { Component } from "react";
 import Timer from "./components/Timer";
+import { isBeforeInstallPrompt } from "./utils/typeguards";
 import "./App.css";
 
 interface State {
   showInstallCTA: boolean;
   deferredPrompt?: Event;
-}
-
-function isBeforeInstallPrompt(
-  event: Event
-): event is BeforeInstallPromptEvent {
-  return "userChoice" in event;
 }
 
 class App extends Component<any, State> {
@@ -45,6 +40,7 @@ class App extends Component<any, State> {
   }
 
   private onInstall() {
+    // Show the install prompt
     if (
       this.state.deferredPrompt &&
       isBeforeInstallPrompt(this.state.deferredPrompt)

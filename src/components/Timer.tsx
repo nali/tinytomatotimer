@@ -3,6 +3,10 @@ import "./Timer.css";
 import tinyTomatoTimerLogo from "./../img/tinyTomatoTimerLogo.svg";
 import TimerButton from "./TimerButton";
 import ProgressBar from "./ProgressBar";
+import {
+  convertMillisecondsToReadableTime,
+  getFormattedCurrentDate
+} from "./../utils/time";
 import IntervalLabel from "./IntervalLabel";
 import CancelImage from "./../img/cancel.svg";
 import SkipImage from "./../img/skip.svg";
@@ -35,7 +39,7 @@ class Timer extends Component<any, State> {
   }
 
   componentWillMount() {
-    get(this.getFormattedCurrentDate()).then(val => {
+    get(getFormattedCurrentDate()).then(val => {
       if (val && typeof val == "number") {
         this.setState({
           completedIntervals: val
@@ -74,7 +78,7 @@ class Timer extends Component<any, State> {
         </div>
         <div>
           <p className="timer__clock">
-            {this.convertMillisecondsToReadableTime(
+            {convertMillisecondsToReadableTime(
               this.state.timeLeftInCurrentInterval
             )}
           </p>
@@ -146,7 +150,7 @@ class Timer extends Component<any, State> {
     if (this.state.currentIntervalType == "workSession") {
       completedIntervals = this.state.completedIntervals + 1;
       this.setState({ completedIntervals });
-      set(this.getFormattedCurrentDate(), completedIntervals);
+      set(getFormattedCurrentDate(), completedIntervals);
     }
 
     switch (this.state.currentIntervalType) {
@@ -178,16 +182,6 @@ class Timer extends Component<any, State> {
     });
   }
 
-  // Returns ISO formatted date, e.g. 2019-11-19
-  private getFormattedCurrentDate() {
-    const date = new Date();
-    return [
-      date.getFullYear(),
-      this.padNumber(date.getMonth() + 1),
-      this.padNumber(date.getDate())
-    ].join("-");
-  }
-
   private notifyUser(isWorkSession: boolean) {
     if (Notification.permission === "granted") {
       const message = isWorkSession
@@ -209,20 +203,6 @@ class Timer extends Component<any, State> {
         }
       });
     }
-  }
-
-  private convertMillisecondsToReadableTime(s: number) {
-    var ms = s % 1000;
-    s = (s - ms) / 1000;
-    var secs = s % 60;
-    s = (s - secs) / 60;
-    var mins = s % 60;
-
-    return this.padNumber(mins) + ":" + this.padNumber(secs);
-  }
-
-  private padNumber(num: number) {
-    return num < 10 ? "0" + num : "" + num;
   }
 }
 
