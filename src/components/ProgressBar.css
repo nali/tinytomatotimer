@@ -1,14 +1,14 @@
 .timer__progressbar {
   display: flex;
   justify-content: space-evenly;
-  padding: 2em;
+  padding: 2rem;
 }
 
 .timer__progressbar__dot {
   border: 2px solid #cbc2de;
   background-color: #fff;
-  height: 1em;
-  width: 1em;
+  height: 1rem;
+  width: 1rem;
   border-radius: 50%;
   -moz-border-radius: 50%;
   -webkit-border-radius: 50%;

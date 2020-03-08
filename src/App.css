@@ -31,7 +31,7 @@ body {
   position: absolute;
   top: 0;
   right: 0;
-  padding: 1em;
+  padding: 1rem;
   text-align: right;
   cursor: pointer;
   transition: background-color 0.5s ease;

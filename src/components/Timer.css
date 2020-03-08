@@ -32,12 +32,12 @@
 
 .timer__controls {
   display: flex;
-  padding: 0 2em;
+  padding: 0 2rem;
 }
 
 .timer__controls--small {
   cursor: pointer;
-  width: 2em;
+  width: 2rem;
   align-self: flex-start;
-  padding-top: 3em;
+  padding-top: 3rem;
 }
