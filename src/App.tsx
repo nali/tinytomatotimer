@@ -17,6 +17,8 @@ class App extends Component<any, State> {
   }
 
   componentDidMount() {
+    // If we receive an install prompt, stash the event so we can instead show
+    // a button in the UI rather than the prompt and avoid disrupting the user flow.
     window.addEventListener("beforeinstallprompt", (e: Event) => {
       e.preventDefault();
       this.setState({
@@ -40,7 +42,6 @@ class App extends Component<any, State> {
   }
 
   private onInstall() {
-    // Show the install prompt
     if (
       this.state.deferredPrompt &&
       isBeforeInstallPrompt(this.state.deferredPrompt)
