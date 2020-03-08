@@ -4,8 +4,10 @@ import LongBreak from "./../img/longBreak.svg";
 import WorkSession from "./../img/workSession.svg";
 import "./IntervalLabel.css";
 
+export type IntervalType = "workSession" | "shortBreak" | "longBreak";
+
 interface Props {
-  intervalType: any;
+  intervalType: IntervalType;
 }
 
 function IntervalLabel(props: Props) {

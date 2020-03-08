@@ -7,7 +7,7 @@ import {
   convertMillisecondsToReadableTime,
   getFormattedCurrentDate
 } from "./../utils/time";
-import IntervalLabel from "./IntervalLabel";
+import IntervalLabel, { IntervalType } from "./IntervalLabel";
 import CancelImage from "./../img/cancel.svg";
 import SkipImage from "./../img/skip.svg";
 import { set, get } from "idb-keyval";
@@ -16,7 +16,7 @@ interface State {
   completedIntervals: number;
   timeLeftInCurrentInterval: number;
   intervalPaused: boolean;
-  currentIntervalType: "workSession" | "shortBreak" | "longBreak";
+  currentIntervalType: IntervalType;
   currentInterval?: number;
 }
 
@@ -24,9 +24,11 @@ const INTERVAL_INCREMENTS = 100;
 const WORK_SESSION = 0.1 * 60 * 1000;
 const SHORT_BREAK = 5 * 60 * 1000;
 const LONG_BREAK = 30 * 60 * 1000;
+interface Props {}
 
-class Timer extends Component<any, State> {
-  constructor(props: any) {
+class Timer extends Component<Props, State> {
+
+  constructor(props: Props) {
     super(props);
     this.state = {
       completedIntervals: 0,
