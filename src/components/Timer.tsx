@@ -32,8 +32,6 @@ class Timer extends Component<Props, State> {
       currentIntervalType: "workSession",
       intervalPaused: false
     };
-
-    this.onIntervalToggle = this.onIntervalToggle.bind(this);
   }
 
   componentWillMount() {
@@ -44,6 +42,22 @@ class Timer extends Component<Props, State> {
         });
       }
     });
+
+    document.addEventListener("keydown", this.onKeyEvent.bind(this));
+  }
+
+  onKeyEvent(event: KeyboardEvent) {
+    switch (event.keyCode) {
+      case 27: // Escape
+        this.resetInterval();
+        break;
+      case 39: // Right arrow
+        this.wrapUpInterval();
+        break;
+      case 13: // Enter
+        this.onTimerToggle();
+        break;
+    }
   }
 
   render() {
@@ -65,7 +79,7 @@ class Timer extends Component<Props, State> {
           />
           <TimerButton
             isRunning={!!this.state.currentInterval}
-            onClick={this.onIntervalToggle.bind(this)}
+            onClick={this.onTimerToggle.bind(this)}
           />
           <img
             className="timer__button--small"
@@ -87,7 +101,7 @@ class Timer extends Component<Props, State> {
     );
   }
 
-  private onIntervalToggle() {
+  private onTimerToggle() {
     this.requestNotifications();
 
     if (this.state.currentInterval) {
