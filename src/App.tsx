@@ -4,6 +4,13 @@ import "./App.css";
 
 interface State {
   showInstallCTA: boolean;
+  deferredPrompt?: Event;
+}
+
+function isBeforeInstallPrompt(
+  event: Event
+): event is BeforeInstallPromptEvent {
+  return "userChoice" in event;
 }
 
 class App extends Component<any, State> {
@@ -15,18 +22,12 @@ class App extends Component<any, State> {
   }
 
   componentDidMount() {
-    let deferredPrompt;
-
-    window.addEventListener("beforeinstallprompt", e => {
-      // Prevent Chrome 67 and earlier from automatically showing the prompt
+    window.addEventListener("beforeinstallprompt", (e: Event) => {
       e.preventDefault();
-      // Stash the event so it can be triggered later.
-      deferredPrompt = e;
-
       this.setState({
-        showInstallCTA: false // Temporarily disable
+        deferredPrompt: e,
+        showInstallCTA: true
       });
-      console.log("Got prompt");
     });
   }
 
@@ -34,11 +35,28 @@ class App extends Component<any, State> {
     return (
       <div className="container">
         {this.state.showInstallCTA && (
-          <div className="install-cta">Add to home screen</div>
+          <div onClick={this.onInstall.bind(this)} className="install-cta">
+            Add to home screen
+          </div>
         )}
         <Timer />
       </div>
     );
+  }
+
+  private onInstall() {
+    // Show the install prompt
+    if (
+      this.state.deferredPrompt &&
+      isBeforeInstallPrompt(this.state.deferredPrompt)
+    ) {
+      this.state.deferredPrompt.prompt();
+    }
+
+    this.setState({
+      deferredPrompt: undefined,
+      showInstallCTA: false
+    });
   }
 }
 

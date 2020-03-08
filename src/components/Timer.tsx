@@ -17,7 +17,7 @@ interface State {
 }
 
 const INTERVAL_INCREMENTS = 100;
-const WORK_SESSION = 25 * 60 * 1000;
+const WORK_SESSION = 0.1 * 60 * 1000;
 const SHORT_BREAK = 5 * 60 * 1000;
 const LONG_BREAK = 30 * 60 * 1000;
 
@@ -178,15 +178,20 @@ class Timer extends Component<any, State> {
     });
   }
 
+  // Returns ISO formatted date, e.g. 2019-11-19
   private getFormattedCurrentDate() {
     const date = new Date();
-    return [date.getDate(), date.getMonth() + 1, date.getFullYear()].join("-");
+    return [
+      date.getFullYear(),
+      this.padNumber(date.getMonth() + 1),
+      this.padNumber(date.getDate())
+    ].join("-");
   }
 
   private notifyUser(isWorkSession: boolean) {
     if (Notification.permission === "granted") {
       const message = isWorkSession
-        ? "Take a break! You just finished a Pomodoro interval."
+        ? "Take a break! You just finished a work interval."
         : "Time for your next work interval, your break is over.";
       new Notification("Tiny Tomato Timer", { body: message });
     }
