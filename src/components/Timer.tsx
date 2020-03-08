@@ -195,6 +195,7 @@ class Timer extends Component<any, State> {
   private requestNotifications() {
     if (!("Notification" in window)) {
       console.log("This browser does not support system notifications");
+      return;
     }
     if (Notification.permission !== "denied") {
       Notification.requestPermission(function(permission) {
