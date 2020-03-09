@@ -3,11 +3,10 @@ import ShortBreak from "./../img/shortBreak.svg";
 import LongBreak from "./../img/longBreak.svg";
 import WorkSession from "./../img/workSession.svg";
 import "./IntervalLabel.css";
-
-export type IntervalType = "workSession" | "shortBreak" | "longBreak";
+import { IntervalType } from "./../models/Pomodoro";
 
 interface Props {
-  intervalType: IntervalType;
+  intervalType?: IntervalType;
 }
 
 function IntervalLabel(props: Props) {

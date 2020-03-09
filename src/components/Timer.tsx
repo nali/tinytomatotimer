@@ -3,22 +3,17 @@ import "./Timer.css";
 import tinyTomatoTimerLogo from "./../img/tinyTomatoTimerLogo.svg";
 import TimerButton from "./TimerButton";
 import ProgressBar from "./ProgressBar";
-import {
-  convertMillisecondsToReadableTime,
-  getFormattedCurrentDate
-} from "./../utils/time";
-import IntervalLabel, { IntervalType } from "./IntervalLabel";
+import { convertMillisecondsToReadableTime } from "./../utils/time";
+import IntervalLabel from "./IntervalLabel";
 import CancelImage from "./../img/cancel.svg";
 import SkipImage from "./../img/skip.svg";
-import { set, get } from "idb-keyval";
-import { Intervals } from "./../Config";
-import Pomodoro from "./../Pomodoro";
+import Pomodoro, { CurrentInterval } from "../models/Pomodoro";
+import { timingSafeEqual } from "crypto";
 
 interface State {
-  completedIntervals: number;
-  timeLeftInCurrentInterval: number;
-  currentIntervalType: IntervalType;
-  currentInterval?: number;
+  currentInterval?: CurrentInterval;
+  intervalCount: number;
+  paused: boolean;
 }
 
 interface Props {}
@@ -28,39 +23,38 @@ class Timer extends Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-
-    this.pomodoro = new Pomodoro();
+    this.pomodoro = new Pomodoro(this.onUpdate.bind(this));
     this.state = {
-      completedIntervals: 0,
-      timeLeftInCurrentInterval: Intervals.work_session,
-      currentIntervalType: "workSession"
+      paused: this.pomodoro.state.paused,
+      intervalCount: this.pomodoro.state.intervalCount,
+      currentInterval: this.pomodoro.state.currentInterval
     };
   }
 
   componentWillMount() {
-    get(getFormattedCurrentDate()).then(val => {
-      if (val && typeof val == "number") {
-        this.setState({
-          completedIntervals: val
-        });
-      }
-    });
-
     document.addEventListener("keydown", this.onKeyEvent.bind(this));
   }
 
   onKeyEvent(event: KeyboardEvent) {
     switch (event.keyCode) {
       case 27: // Escape
-        this.resetInterval();
+        this.onReset();
         break;
       case 39: // Right arrow
-        this.wrapUpInterval();
+        this.onSkip();
         break;
       case 13: // Enter
-        this.onTimerToggle();
+        this.onToggle();
         break;
     }
+  }
+
+  onUpdate(currentInterval: CurrentInterval, intervalCount: number) {
+    console.log(currentInterval);
+    this.setState({
+      currentInterval: currentInterval,
+      intervalCount: intervalCount
+    });
   }
 
   render() {
@@ -76,149 +70,79 @@ class Timer extends Component<Props, State> {
         <div className="timer__controls">
           <img
             className="timer__button--small"
-            onClick={this.resetInterval.bind(this)}
+            onClick={this.onReset.bind(this)}
             src={CancelImage}
-            alt="Cancel Interval"
+            alt="Reset Interval"
           />
           <TimerButton
-            isRunning={!!this.state.currentInterval}
-            onClick={this.onTimerToggle.bind(this)}
+            isRunning={
+              (this.state.currentInterval &&
+                !this.state.currentInterval.paused) ||
+              false
+            }
+            onClick={this.onToggle.bind(this)}
           />
           <img
             className="timer__button--small"
             src={SkipImage}
             alt="Skip Interval"
-            onClick={this.wrapUpInterval.bind(this)}
+            onClick={this.onSkip.bind(this)}
           />
         </div>
         <div>
           <p className="timer__clock">
             {convertMillisecondsToReadableTime(
-              this.state.timeLeftInCurrentInterval
+              (this.state.currentInterval &&
+                this.state.currentInterval.timeLeft) ||
+                0
             )}
           </p>
-          <IntervalLabel intervalType={this.state.currentIntervalType} />
+          <IntervalLabel
+            intervalType={
+              this.state.currentInterval && this.state.currentInterval.type
+            }
+          />
         </div>
-        <ProgressBar completedIntervals={this.state.completedIntervals} />
+        <ProgressBar completedIntervals={this.state.intervalCount} />
       </div>
     );
   }
 
-  private onTimerToggle() {
-    this.requestNotifications();
-
-    if (this.state.currentInterval) {
-      this.clearCurrentInterval();
-    } else {
-      this.setState({
-        currentInterval: window.setInterval(
-          this.onIntervalIncrement.bind(this, Intervals.increments),
-          Intervals.increments
-        )
-      });
-    }
+  private onToggle() {
+    // this.requestNotifications();
+    this.pomodoro.toggle();
   }
 
-  private wrapUpInterval() {
-    this.clearCurrentInterval();
-    this.updateStats();
+  private onReset() {
+    this.pomodoro.reset();
   }
 
-  private resetInterval() {
-    this.clearCurrentInterval();
-
-    switch (this.state.currentIntervalType) {
-      case "workSession":
-        this.setState({
-          timeLeftInCurrentInterval: Intervals.work_session
-        });
-        break;
-      case "longBreak":
-        this.setState({
-          timeLeftInCurrentInterval: Intervals.long_break
-        });
-        break;
-      case "shortBreak":
-        this.setState({
-          timeLeftInCurrentInterval: Intervals.short_break
-        });
-        break;
-      default:
-    }
+  private onSkip() {
+    this.pomodoro.finish();
   }
 
-  private onIntervalIncrement(s: number) {
-    const timeLeft = this.state.timeLeftInCurrentInterval - s;
-    if (timeLeft < 0) {
-      // We've just finished the interval
-      this.wrapUpInterval();
-      this.notifyUser(this.state.currentIntervalType !== "workSession");
-    } else {
-      this.setState({
-        timeLeftInCurrentInterval: timeLeft
-      });
-    }
-  }
+  // private notifyUser(isWorkSession: boolean) {
+  //   if (Notification.permission === "granted") {
+  //     const message = isWorkSession
+  //       ? "Take a break! You just finished a work interval."
+  //       : "Time for your next work interval, your break is over.";
+  //     new Notification("Tiny Tomato Timer", { body: message });
+  //   }
+  // }
 
-  private updateStats() {
-    let completedIntervals = this.state.completedIntervals;
-    if (this.state.currentIntervalType == "workSession") {
-      completedIntervals = this.state.completedIntervals + 1;
-      this.setState({ completedIntervals });
-      set(getFormattedCurrentDate(), completedIntervals);
-    }
-
-    switch (this.state.currentIntervalType) {
-      case "workSession":
-        if (completedIntervals % 4 === 0) {
-          this.setState({
-            currentIntervalType: "longBreak",
-            timeLeftInCurrentInterval: Intervals.long_break
-          });
-        } else {
-          this.setState({
-            currentIntervalType: "shortBreak",
-            timeLeftInCurrentInterval: Intervals.short_break
-          });
-        }
-        break;
-      default:
-        this.setState({
-          currentIntervalType: "workSession",
-          timeLeftInCurrentInterval: Intervals.work_session
-        });
-    }
-  }
-
-  private clearCurrentInterval() {
-    window.clearInterval(this.state.currentInterval);
-    this.setState({
-      currentInterval: undefined
-    });
-  }
-
-  private notifyUser(isWorkSession: boolean) {
-    if (Notification.permission === "granted") {
-      const message = isWorkSession
-        ? "Take a break! You just finished a work interval."
-        : "Time for your next work interval, your break is over.";
-      new Notification("Tiny Tomato Timer", { body: message });
-    }
-  }
-
-  private requestNotifications() {
-    if (!("Notification" in window)) {
-      console.log("This browser does not support system notifications");
-      return;
-    }
-    if (Notification.permission !== "denied") {
-      Notification.requestPermission(function(permission) {
-        if (permission === "granted") {
-          console.log("Notification permissions have been granted");
-        }
-      });
-    }
-  }
+  // private requestNotifications() {
+  //   if (!("Notification" in window)) {
+  //     console.log("This browser does not support system notifications");
+  //     return;
+  //   }
+  //   if (Notification.permission !== "denied") {
+  //     Notification.requestPermission(function(permission) {
+  //       if (permission === "granted") {
+  //         console.log("Notification permissions have been granted");
+  //       }
+  //     });
+  //   }
+  // }
 }
 
 export default Timer;
