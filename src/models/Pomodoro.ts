@@ -144,7 +144,7 @@ class Pomodoro {
       const message =
         this.currentInterval.type === "workSession"
           ? "Take a break! You just finished a work interval."
-          : "Time for your next work interval, your break is over.";
+          : "Break's up! Let's get back to work.";
       new Notification("Tiny Tomato Timer", { body: message });
     }
   }
