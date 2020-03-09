@@ -8,7 +8,6 @@ import IntervalLabel from "./IntervalLabel";
 import CancelImage from "./../img/cancel.svg";
 import SkipImage from "./../img/skip.svg";
 import Pomodoro, { CurrentInterval } from "../models/Pomodoro";
-import { timingSafeEqual } from "crypto";
 
 interface State {
   currentInterval?: CurrentInterval;
