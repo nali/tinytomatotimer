@@ -50,7 +50,6 @@ class Timer extends Component<Props, State> {
   }
 
   onUpdate(currentInterval: CurrentInterval, intervalCount: number) {
-    console.log(currentInterval);
     this.setState({
       currentInterval: currentInterval,
       intervalCount: intervalCount
@@ -109,7 +108,6 @@ class Timer extends Component<Props, State> {
   }
 
   private onToggle() {
-    // this.requestNotifications();
     this.pomodoro.toggle();
   }
 
@@ -120,29 +118,6 @@ class Timer extends Component<Props, State> {
   private onSkip() {
     this.pomodoro.finish();
   }
-
-  // private notifyUser(isWorkSession: boolean) {
-  //   if (Notification.permission === "granted") {
-  //     const message = isWorkSession
-  //       ? "Take a break! You just finished a work interval."
-  //       : "Time for your next work interval, your break is over.";
-  //     new Notification("Tiny Tomato Timer", { body: message });
-  //   }
-  // }
-
-  // private requestNotifications() {
-  //   if (!("Notification" in window)) {
-  //     console.log("This browser does not support system notifications");
-  //     return;
-  //   }
-  //   if (Notification.permission !== "denied") {
-  //     Notification.requestPermission(function(permission) {
-  //       if (permission === "granted") {
-  //         console.log("Notification permissions have been granted");
-  //       }
-  //     });
-  //   }
-  // }
 }
 
 export default Timer;

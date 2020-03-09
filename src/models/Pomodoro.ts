@@ -3,7 +3,7 @@ import { getFormattedCurrentDate } from "../utils/time";
 import Stopwatch from "./Stopwatch";
 
 export const MAX_INTERVALS: number = 8; // After which your workday is done
-const WORK_SESSION_LENGTH: number = 0.1 * 60 * 1000; // 25 minutes
+const WORK_SESSION_LENGTH: number = 25 * 60 * 1000; // 25 minutes
 const LONG_BREAK_LENGTH: number = 30 * 60 * 1000; // 30 minutes
 const SHORT_BREAK_LENGTH: number = 5 * 60 * 1000; // 5 minutes
 const LONG_BREAK_AFTER: [number] = [4]; // How many work sessions the longer breaks should be after
@@ -61,6 +61,8 @@ class Pomodoro {
         this.update();
       }
     });
+
+    this.requestNotifications();
   }
 
   pause() {
@@ -99,6 +101,7 @@ class Pomodoro {
       set(getFormattedCurrentDate(), this.intervalCount);
     }
 
+    this.notify();
     this.next();
   }
 
@@ -114,16 +117,16 @@ class Pomodoro {
     this.pause();
   }
 
-  update() {
-    this.onUpdate(this.state.currentInterval, this.state.intervalCount);
-  }
-
   get state() {
     return {
       paused: this.currentInterval.paused,
       currentInterval: this.currentInterval,
       intervalCount: this.intervalCount
     };
+  }
+
+  private update() {
+    this.onUpdate(this.state.currentInterval, this.state.intervalCount);
   }
 
   private onStopwatchTick(timeLeft: number) {
@@ -134,6 +137,30 @@ class Pomodoro {
   private onStopwatchFinish() {
     this.finish();
     this.update();
+  }
+
+  private notify() {
+    if (Notification.permission === "granted") {
+      const message =
+        this.currentInterval.type === "workSession"
+          ? "Take a break! You just finished a work interval."
+          : "Time for your next work interval, your break is over.";
+      new Notification("Tiny Tomato Timer", { body: message });
+    }
+  }
+
+  private requestNotifications() {
+    if (!("Notification" in window)) {
+      console.log("This browser does not support system notifications");
+      return;
+    }
+    if (Notification.permission !== "denied") {
+      Notification.requestPermission(function(permission) {
+        if (permission === "granted") {
+          console.log("Notification permissions have been granted");
+        }
+      });
+    }
   }
 }
 
