@@ -140,7 +140,7 @@ class Pomodoro {
   }
 
   private notify() {
-    if (Notification.permission === "granted") {
+    if ("Notification" in window && Notification.permission === "granted") {
       const message =
         this.currentInterval.type === "workSession"
           ? "Take a break! You just finished a work interval."
