@@ -24,3 +24,7 @@ Smoke tests can be run with `npm test`
 ### Make my production build
 
 `npm build` will create assets in the `build/` folder.
+
+### View me
+
+Live demo at http://tinytomatotimer.firebaseapp.com/.
