@@ -55,6 +55,7 @@ class Pomodoro {
     this.intervalCount = 0;
     this.onUpdate = onUpdate;
 
+    // Check IndexedDB to see if we have any completed sessions from today
     get(getFormattedCurrentDate()).then(val => {
       if (val && typeof val == "number") {
         this.intervalCount = val;
@@ -98,6 +99,8 @@ class Pomodoro {
   finish() {
     if (this.currentInterval.type === "workSession") {
       this.intervalCount++;
+
+      // Update IndexedDB
       set(getFormattedCurrentDate(), this.intervalCount);
     }
 
@@ -141,6 +144,7 @@ class Pomodoro {
 
   private notify() {
     if ("Notification" in window && Notification.permission === "granted") {
+      // Should also handle end condition
       const message =
         this.currentInterval.type === "workSession"
           ? "Take a break! You just finished a work interval."
