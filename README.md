@@ -1,11 +1,15 @@
 ## Tiny Tomato Timer
+
 An offline-first progressive web app that lets you time your work sessions.
 
-Uses 
-* a service worker to serve cached resources offline
-* desktop notifications for alerting you about the end of a session
-* IndexedDB to persist your day's completed sessions
-* a manifest file to ensure it is picked up as a progressive web app by browsers that support installation
+![Screenshot](/images/screenshot.png)
+
+Uses
+
+- a service worker to serve cached resources offline
+- desktop notifications for alerting you about the end of a session
+- IndexedDB to persist your day's completed sessions
+- a manifest file to ensure it is picked up as a progressive web app by browsers that support installation
 
 Built with Typescript + React.
 
